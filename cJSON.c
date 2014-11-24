@@ -34,7 +34,10 @@
 
 static const char *ep;
 
-const char *cJSON_GetErrorPtr(void) { return ep; }
+const char *cJSON_GetErrorPtr(void)
+{
+	return ep;
+}
 
 static int cJSON_strcasecmp(const char *s1, const char *s2)
 {
@@ -337,7 +340,8 @@ static char *print_string_ptr(const char *str)
 	if (!str)
 		return cJSON_strdup("");
 	ptr = str;
-	while ((token = *ptr) && ++len) {
+	while ((token = *ptr)) {
+		++len;
 		if (strchr("\"\\\b\f\n\r\t", token))
 			len++;
 		else if (token < 32)
