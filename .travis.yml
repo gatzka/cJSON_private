@@ -1,0 +1,37 @@
+language: c
+
+branches:
+  except:
+    - /^feature.*$/
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+    - secure: "QHBCY7S3ZYOtu5zujyMnyHg74srAIfFSKJbrlBdETk2T6YStPug3Z5PuY7ahXfPyM/4w7og8KyvuGZL0YsJrNaJSpsbDETtwvKEorzLjfKyRwDV2SyTpnSLauGgZmjPZnkXzp8lQIR+cIo7of6frjxd47E8WCKCGFJKa0pUG5Bw="
+  matrix:
+    - BUILD=gcc
+
+before_script:
+  - mkdir build
+  - cd build
+
+script:
+  - if [ ${COVERITY_SCAN_BRANCH} != 1 ]; then
+      case ${BUILD} in
+        gcc)
+          cmake ..  &&
+          make
+          ;;
+      esac ;
+    fi
+
+addons:
+  coverity_scan:
+    project:
+      name: "gatzka/cJSON"
+      description: "Build submitted via Travis CI"
+    notification_email: stephan.gatzka@gmail.com
+    build_command_prepend: "cmake ../"
+    build_command: "make"
+    branch_pattern: coverity_scan
