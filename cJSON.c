@@ -402,11 +402,11 @@ static char *print_string(cJSON *item)
 
 /* Predeclare these prototypes. */
 static const char *parse_value(cJSON *item, const char *value);
-static char *print_value(cJSON *item, int depth, int fmt);
+static char *print_value(cJSON *item, unsigned int depth, int fmt);
 static const char *parse_array(cJSON *item, const char *value);
-static char *print_array(cJSON *item, int depth, int fmt);
+static char *print_array(cJSON *item, unsigned int depth, int fmt);
 static const char *parse_object(cJSON *item, const char *value);
-static char *print_object(cJSON *item, int depth, int fmt);
+static char *print_object(cJSON *item, unsigned int depth, int fmt);
 
 /* Utility to jump whitespace and cr/lf */
 static const char *skip(const char *in)
@@ -453,8 +453,14 @@ cJSON *cJSON_Parse(const char *value)
 }
 
 /* Render a cJSON item/entity/structure to text. */
-char *cJSON_Print(cJSON *item) { return print_value(item, 0, 1); }
-char *cJSON_PrintUnformatted(cJSON *item) { return print_value(item, 0, 0); }
+char *cJSON_Print(cJSON *item)
+{
+	return print_value(item, 0, 1);
+}
+char *cJSON_PrintUnformatted(cJSON *item)
+{
+	return print_value(item, 0, 0);
+}
 
 /* Parser core - when encountering text, process appropriately. */
 static const char *parse_value(cJSON *item, const char *value)
@@ -492,7 +498,7 @@ static const char *parse_value(cJSON *item, const char *value)
 }
 
 /* Render a value to text. */
-static char *print_value(cJSON *item, int depth, int fmt)
+static char *print_value(cJSON *item, unsigned int depth, int fmt)
 {
 	char *out = 0;
 	if (!item)
@@ -564,13 +570,13 @@ static const char *parse_array(cJSON *item, const char *value)
 }
 
 /* Render an array to text */
-static char *print_array(cJSON *item, int depth, int fmt)
+static char *print_array(cJSON *item, unsigned int depth, int fmt)
 {
 	char **entries;
 	char *out = 0, *ptr, *ret;
 	int len = 5;
 	cJSON *child = item->child;
-	int numentries = 0, i = 0, fail = 0;
+	unsigned int numentries = 0, i = 0, fail = 0;
 
 	/* How many entries in the array? */
 	while (child)
@@ -697,13 +703,13 @@ static const char *parse_object(cJSON *item, const char *value)
 }
 
 /* Render an object to text. */
-static char *print_object(cJSON *item, int depth, int fmt)
+static char *print_object(cJSON *item, unsigned int depth, int fmt)
 {
 	char **entries = 0, **names = 0;
 	char *out = 0, *ptr, *ret, *str;
-	int len = 7, i = 0, j;
+	unsigned int len = 7, i = 0, j;
 	cJSON *child = item->child;
-	int numentries = 0, fail = 0;
+	unsigned int numentries = 0, fail = 0;
 	/* Count the number of entries. */
 	while (child)
 		numentries++, child = child->next;
@@ -807,15 +813,15 @@ static char *print_object(cJSON *item, int depth, int fmt)
 }
 
 /* Get Array size/item / object item. */
-int cJSON_GetArraySize(cJSON *array)
+unsigned int cJSON_GetArraySize(cJSON *array)
 {
 	cJSON *c = array->child;
-	int i = 0;
+	unsigned int i = 0;
 	while (c)
 		i++, c = c->next;
 	return i;
 }
-cJSON *cJSON_GetArrayItem(cJSON *array, int item)
+cJSON *cJSON_GetArrayItem(cJSON *array, unsigned int item)
 {
 	cJSON *c = array->child;
 	while (c && item > 0)
@@ -882,7 +888,7 @@ void cJSON_AddItemReferenceToObject(cJSON *object, const char *string,
 	cJSON_AddItemToObject(object, string, create_reference(item));
 }
 
-cJSON *cJSON_DetachItemFromArray(cJSON *array, int which)
+cJSON *cJSON_DetachItemFromArray(cJSON *array, unsigned int which)
 {
 	cJSON *c = array->child;
 	while (c && which > 0)
@@ -898,13 +904,13 @@ cJSON *cJSON_DetachItemFromArray(cJSON *array, int which)
 	c->prev = c->next = 0;
 	return c;
 }
-void cJSON_DeleteItemFromArray(cJSON *array, int which)
+void cJSON_DeleteItemFromArray(cJSON *array, unsigned int which)
 {
 	cJSON_Delete(cJSON_DetachItemFromArray(array, which));
 }
 cJSON *cJSON_DetachItemFromObject(cJSON *object, const char *string)
 {
-	int i = 0;
+	unsigned int i = 0;
 	cJSON *c = object->child;
 	while (c && cJSON_strcasecmp(c->string, string))
 		i++, c = c->next;
@@ -918,7 +924,7 @@ void cJSON_DeleteItemFromObject(cJSON *object, const char *string)
 }
 
 /* Replace array/object items with new ones. */
-void cJSON_ReplaceItemInArray(cJSON *array, int which, cJSON *newitem)
+void cJSON_ReplaceItemInArray(cJSON *array, unsigned int which, cJSON *newitem)
 {
 	cJSON *c = array->child;
 	while (c && which > 0)
@@ -939,7 +945,7 @@ void cJSON_ReplaceItemInArray(cJSON *array, int which, cJSON *newitem)
 void cJSON_ReplaceItemInObject(cJSON *object, const char *string,
 			       cJSON *newitem)
 {
-	int i = 0;
+	unsigned int i = 0;
 	cJSON *c = object->child;
 	while (c && cJSON_strcasecmp(c->string, string))
 		i++, c = c->next;
