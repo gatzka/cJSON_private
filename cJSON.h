@@ -127,6 +127,8 @@ extern cJSON *cJSON_ParseWithOpts(const char *value,const char **return_parse_en
 
 extern void cJSON_Minify(char *json);
 
+extern void *(*cJSON_malloc)(size_t sz);
+extern void (*cJSON_free)(void *ptr);
 /* Macros for creating things quickly. */
 #define cJSON_AddNullToObject(object,name)		cJSON_AddItemToObject(object, name, cJSON_CreateNull())
 #define cJSON_AddTrueToObject(object,name)		cJSON_AddItemToObject(object, name, cJSON_CreateTrue())
